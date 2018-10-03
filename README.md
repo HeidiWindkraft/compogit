@@ -11,4 +11,4 @@ Therefore, the commits have to be split using `git rebase -i`.
 `compogit` is meant to automate this.
 
 If you have different components in your repository,
-you should probably create a git repository for each components.
+you should probably create a git repository for each component.
