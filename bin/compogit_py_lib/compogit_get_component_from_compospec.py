@@ -42,55 +42,6 @@ DESCRIPTION
   );
 
 
-# #### #### #### #### #### #### #### #### #### #### #### ####
-# # Implementation of glob.
-# #### #### #### #### #### #### #### #### #### #### #### ####
-# 
-# # The pattern you get when you pass "**" or "*" to fnmatch.translate.
-# g_doublestarpat = None;
-# g_singlestarpat = None;
-# 
-# def init_glob_starpats():
-#   """ Lazily initializes the star patterns.
-#       "**" and "*" can be matched to the same pattern,
-#       but why would anyone do that?
-#       Just to optimize the case that someone wrongly thought that fnmatch had "**"?
-#   """
-#   global g_doublestarpat;
-#   global g_singlestarpat;
-#   if (g_doublestarpat == None):
-#     angle = re.compile(".*<([^\\\\>]+)\\\\?>"); #:_
-#     g_doublestarpat = angle.match(fnmatch.translate("<**>")).group(1);
-#     g_singlestarpat = angle.match(fnmatch.translate("<*>")).group(1);
-#     if (g_doublestarpat == g_singlestarpat):
-#       raise Exception("Feature 'glob' does not work. Unexpected fnmatch implementation.");
-#   return;
-# 
-# def translate_glob(glob):
-#   """ Translates a glob pattern to a regex pattern. """
-#   pat = fnmatch.translate(glob); #:_
-#   # Note:
-#   #  - '<' and '>' must not appear in filenames.
-#   #  - No glob/fnmatch pattern can result in regex /\.*/.
-#   init_glob_starpats();
-#   pat = pat.replace(g_doublestarpat, "<>");
-#   pat = pat.replace(g_singlestarpat, "[^/]*");
-#   pat = pat.replace("<>", ".*");
-#   return pat;
-#   # pat = re.escape(glob); #:_
-#   # # Care about unix character set rules.
-#   # #  pat = re.sub(r"\\\[([^\\]+)\]", r"[\1]", pat); # inverted set, like [!a-z].
-#   # #  pat = re.sub(r"\\\[([^\\]+)\]", r"[\1]", pat); # normal set, like [a-z].
-#   # # Care about common rules.
-#   # pat = pat.replace("\\?", "."); # ? matches a single character.
-#   # pat = pat.replace("\\*\\*", ".*"); # ** matches all files including files in sub-directories.
-#   # pat = pat.replace("\\*", "[^/]*"); # * matches all files in this directory.
-# 
-
-#### #### #### #### #### #### #### #### #### #### #### ####
-# Implementation of compogit-get-component-from-compospec.
-#### #### #### #### #### #### #### #### #### #### #### ####
-
 # Allowed component fields.
 c_component_fields = {
   'overrides',
@@ -119,10 +70,7 @@ def json_field_as_iterable(jsonobj, fieldname):
     # Field doesn't exist -> empty list.
     return [];
   field = jsonobj[fieldname]; #:_
-  if (field == None): # TODO json doesn't do this
-    # Field is None -> empty list.
-    return [];
-  elif (isinstance(field,str)):
+  if (isinstance(field,str)):
     # Field is a scalar -> wrap it in a list.
     return [ field ];
   else:
@@ -162,8 +110,6 @@ class Component:
     for p in json_field_as_iterable(jsonobj, 'glob'):
       p = prepare_path(p);
       self.regexes.append(re.compile(glob_to_regex.translate(p)));
-      #self.regexes.append(re.compile(translate_glob(p)));
-      # raise ValueError("In component " + self.name + ": glob is currently not supported."); # TODO
 
 # The 'none' component.
 c_none = Component("none");
@@ -173,8 +119,6 @@ def get_components_from_jsonfh(f):
   jsonmap = json.load(f); #_
   res = { }; #:_
   for key in jsonmap.keys():
-    if (key in res): # TODO json doesn't do this.
-      raise ValueError("MultipleCompoDefs: Multiple definitions of '" + key + "' in component description");
     if (not cr_compid.match(key)):
       raise ValueError("InvalidCompoIdentifier: The following is not a valid component identifier: " + key);
     if (key == "none"):
@@ -210,7 +154,7 @@ def get_component_of_file(compmap, fname):
         + ' '.join([ m.name for m in must]) + " }");
   if (len(must) < 1):
     return c_none;
-  # There's only one element. for comp in must: return comp; # TODO bad coverage
+  # There's only one element.
   return next(iter(must));
 
 class CompoFilePair:
