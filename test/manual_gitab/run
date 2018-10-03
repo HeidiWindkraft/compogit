@@ -3,6 +3,7 @@
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 bindir="$(cd "${scriptdir}/../../bin" >/dev/null && pwd )"
 
+# Create a git repository
 mkdir gitab
 cd gitab
 git init
@@ -12,6 +13,7 @@ mkdir b
 git config user.name "compogit test"
 git config user.email test@compogit.com
 
+# Create commits which don't touch multiple components.
 echo a1 > a/a.txt
 echo b1 > b/b.txt
 git add a/a.txt
@@ -19,11 +21,13 @@ git commit -m "Initial commit to a/a.txt"
 git add b/b.txt
 git commit -m "Initial commit to b/b.txt"
 
+# Create a commit which touches two components.
 echo a2 > a/a.txt
 echo b2 > b/b.txt
 git add .
 git commit -m "Commit to both components"
 
+# Create some more commits which don't touch multiple components.
 echo a3 > a/a.txt
 echo b3 > b/b.txt
 git add a/a.txt
@@ -33,7 +37,7 @@ git commit -m "Third commit to b/b.txt"
 
 git log
 
-#${bindir}/compogit-get-unpushed-commits | sed '3q;d' -
+# Get the commits
 hash1=$(${bindir}/compogit-get-unpushed-commits | sed '1q;d' -) # "Third commit to b/b.txt"
 hash2=$(${bindir}/compogit-get-unpushed-commits | sed '2q;d' -) # "Third commit to a/a.txt"
 
@@ -42,33 +46,30 @@ hash3=$(${bindir}/compogit-get-unpushed-commits | sed '3q;d' -) # "Commit to bot
 hash4=$(${bindir}/compogit-get-unpushed-commits | sed '4q;d' -) # "Initial commit to b/b.txt"
 hash5=$(${bindir}/compogit-get-unpushed-commits | sed '5q;d' -) # "Initial commit to a/a.txt"
 
-# git log --format=format:%H | head -n 2 | sed -e 's/^/pick /' - > command.txt
-# git log --format=format:%H | sed '3q;d' - | sed -e 's/^/edit /' - >> command.txt
-# git log --format=format:%H | tail -n 2 | sed -e 's/^/pick /' - >> command.txt
-# echo >> command.txt
-# 
-# tac command.txt > command1.txt
-# ${bindir}/compogit-rebase-using-sequence command1.txt ${hash4}
-# git rebase -i ${hash3} < command.txt
 
-
-# get compogit
+# Get a compogit configuration.
 cp -r "${scriptdir}/compogit" ./compogit
 
+# Write a rebase todo sequence.
 echo "edit ${hash3}" >> command.txt
 echo "pick ${hash2}" >> command.txt
 echo "pick ${hash1}" >> command.txt
 
+# Rebase using the todo sequence in command.txt
 ${bindir}/compogit-rebase-using-sequence command.txt ${hash4}
 
+# Split commit "hash3" (the one which is marked with "edit").
 git reset HEAD~
 
+# Commit files of component A.
 git add $(git status --porcelain | cut -c 4- | ${bindir}/compogit-filter-filelist-for-component A)
 git commit -m "Split commit to component A"
 
+# Commit files of component B.
 git add $(git status --porcelain | cut -c 4- | ${bindir}/compogit-filter-filelist-for-component B)
 git commit -m "Split commit to component B"
 
+# Pick the rest of the commits.
 git rebase --continue
 
 echo "AFTER git rebase --continue"
