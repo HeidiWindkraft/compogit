@@ -1,0 +1,14 @@
+src/kernel/include/kernel/api.h
+src/kernel/include/kernel/ARM64/arch.h
+src/kernel/include/kernel/ARM32/arch.h
+src/kernel/include/kernel/ARM/common-arch.h
+src/kernel/src/ARM64/arch.c
+src/kernel/src/ARM32/arch.c
+src/kernel/src/ARM/common-arch.c
+src/kernel/src/ARM/common-arch.c
+src/RISCV32/something.c
+src/kernel/include/kernel/RISCV32/arch.h
+other/stuff.txt
+test/bla.c
+test_other/bla.c
+src//kernel///include////kernel/////api.h

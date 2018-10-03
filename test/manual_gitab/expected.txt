@@ -1,0 +1,6 @@
+Third commit to b/b.txt
+Third commit to a/a.txt
+Split commit to component B
+Split commit to component A
+Initial commit to b/b.txt
+Initial commit to a/a.txt

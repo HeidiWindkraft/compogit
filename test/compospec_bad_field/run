@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+bindir="$(cd "${scriptdir}/../../bin" >/dev/null && pwd )"
+
+#pycall="${pycovercall} ${bindir}/compogit-get-component-from-compospec.py ${scriptdir}/compospec.json"
+
+${bindir}/compogit-get-component-from-compospec "${scriptdir}/compospec.json" 2>./call.stderr.txt < /dev/null
+if grep -q UnknownComponentField ./call.stderr.txt && grep -q nonsensefield ./call.stderr.txt; then
+	echo "ok" >> status.txt
+else
+	echo "FAILED" >> status.txt
+fi

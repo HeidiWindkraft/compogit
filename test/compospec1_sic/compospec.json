@@ -1,0 +1,16 @@
+{
+	"ar": { "path": [ "ar" ] },
+	"asm": { "path": [ "asm" ] },
+	"bparser": { "path": [ "bparser" ] },
+	"diag": { "path": [ "diag" ] },
+	"dodl": { "path": [ "dodl" ] },
+	"doml": { "path": [ "doml" ] },
+	"functional": { "path": [ "functional" ] },
+	"hdl": { "path": [ "hdl" ] },
+	"java2sicc": { "path": [ "java2sicc" ] },
+	"jtemplates": { "path": [ "jtemplates" ] },
+	"jutil": { "path": [ "jutil" ] },
+	"sicc": { "path": [ "sicc" ] },
+	"sice": { "path": [ "sice" ] },
+	"tools": { "path": [ "tools" ] }
+}

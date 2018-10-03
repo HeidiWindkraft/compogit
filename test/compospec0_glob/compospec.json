@@ -1,0 +1,30 @@
+{
+	"SourceCodeCommon": {
+		"path": [ "src" ]
+	},
+	"SourceCodeArm32": {
+		"overrides": "SourceCodeCommon",
+		"glob": [ "src/**/ARM32/**" ]
+	},
+	"SourceCodeArm64": {
+		"overrides": "SourceCodeCommon",
+		"glob": [ "src/**/ARM64/**" ]
+	},
+	"SourceCodeArmCommon": {
+		"overrides": "SourceCodeCommon",
+		"glob": [ "src/**/ARM/**" ]
+	},
+	"SourceCodeRiscV32": {
+		"overrides": "SourceCodeCommon",
+		"glob": [ "src/**/RISCV32/**" ]
+	},
+	"TestSource": {
+		"path": [ "test" ]
+	},
+	"Ambiguous1": {
+		"fnmatch": "amb/A*"
+	},
+	"Ambiguous2": {
+		"fnmatch": "amb/Am*"
+	}
+}

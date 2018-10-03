@@ -1,0 +1,11 @@
+doml:doml/draft/doml0.cxx
+bparser:bparser/test/RawStrings.txt
+jtemplates:jtemplates/m4/sic/jutil/ReadableDeque.java
+sice:sice/src/bitset.c
+ar:ar/java/ArMultiFileInputStream.java
+sicc:sicc/yacc/Parser.y
+functional:functional/misc/0.txt
+hdl:hdl/yacc/Parser.y
+dodl:dodl/jtests/Test0Reflect.java
+diag:diag/java/Severity.java
+jutil:jutil/java/versioned/IVersionedList.java

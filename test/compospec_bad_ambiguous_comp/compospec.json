@@ -1,0 +1,8 @@
+{
+	"Ambiguous1": {
+		"fnmatch": "amb/A*"
+	},
+	"Ambiguous2": {
+		"fnmatch": "amb/Am*"
+	}
+}

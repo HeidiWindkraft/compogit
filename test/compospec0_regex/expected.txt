@@ -1,0 +1,14 @@
+SourceCodeCommon:src/kernel/include/kernel/api.h
+SourceCodeArm64:src/kernel/include/kernel/ARM64/arch.h
+SourceCodeArm32:src/kernel/include/kernel/ARM32/arch.h
+SourceCodeArmCommon:src/kernel/include/kernel/ARM/common-arch.h
+SourceCodeArm64:src/kernel/src/ARM64/arch.c
+SourceCodeArm32:src/kernel/src/ARM32/arch.c
+SourceCodeArmCommon:src/kernel/src/ARM/common-arch.c
+SourceCodeArmCommon:src/kernel/src/ARM/common-arch.c
+SourceCodeRiscV32:src/RISCV32/something.c
+SourceCodeRiscV32:src/kernel/include/kernel/RISCV32/arch.h
+none:other/stuff.txt
+TestSource:test/bla.c
+none:test_other/bla.c
+SourceCodeCommon:src/kernel/include/kernel/api.h

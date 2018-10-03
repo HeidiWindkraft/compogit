@@ -1,0 +1,30 @@
+{
+	"SourceCodeCommon": {
+		"regex": [ "^src/", "^src$" ]
+	},
+	"SourceCodeArm32": {
+		"overrides": "SourceCodeCommon",
+		"regex": [ "^src/.*/ARM32/" ]
+	},
+	"SourceCodeArm64": {
+		"overrides": "SourceCodeCommon",
+		"fnmatch": [ "src/*/ARM64/*" ]
+	},
+	"SourceCodeArmCommon": {
+		"overrides": "SourceCodeCommon",
+		"fnmatch": [ "src/*/ARM/*" ]
+	},
+	"SourceCodeRiscV32": {
+		"overrides": "SourceCodeCommon",
+		"fnmatch": [ "src/*RISCV32/*" ]
+	},
+	"TestSource": {
+		"path": [ "test" ]
+	},
+	"Ambiguous1": {
+		"fnmatch": "amb/A*"
+	},
+	"Ambiguous2": {
+		"fnmatch": "amb/Am*"
+	}
+}

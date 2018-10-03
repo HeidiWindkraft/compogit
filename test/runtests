@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+compogitdir="$(cd "${scriptdir}/.." >/dev/null && pwd )"
+
+# pyfiles=$(find "${compogitdir}/bin" -name "*.py")
+# pyfilesl=
+# sep=
+# for f in ${pyfiles}; do
+# 	echo FFFF "${f}"
+# 	pyfilesl="${pyfilesl}${sep}${f}"
+# 	sep=","
+# done
+
+runscripts=$(find ${scriptdir} -mindepth 2 -maxdepth 2 -type f -name run | sort)
+
+if [ -z "${TEST_BASE}" ]; then
+	export TEST_BASE="${compogitdir}/local_test_base"
+	echo "Warning: TestBaseNotSet: TEST_BASE is not set, using '${TEST_BASE}'" 1>&2
+fi
+
+mkdir -p "${TEST_BASE}/compogit"
+cd "${TEST_BASE}/compogit"
+
+do_cov=false
+if [ ! -z "$1" ]; then
+	if [ "$1" == "cov" ]; then
+		do_cov=true
+	elif [ "$1" == "nocov" ]; then
+		do_cov=false
+	else
+		echo "Error: Unknown coverage option." 1>&2
+		exit 1
+	fi
+fi
+
+if [ $do_cov == true ]; then
+	#export pycovercall="coverage3 run --branch "
+	#export pycovercalls="coverage3 run --branch --source=\"${compogitdir}\" "
+	export COMPOGIT_PYTHON="coverage3 run --branch"
+else
+	#export pycovercall=
+	#export pycovercalls=
+	export COMPOGIT_PYTHON=
+fi
+
+RED_COLOR="\033[0;31m"
+GREEN_COLOR="\033[0;32m"
+DEFAULT_COLOR="\033[0m"
+
+for s in ${runscripts}; do
+	testname="$(basename $(dirname "${s}"))"
+	resdir="results/${testname}"
+	mkdir -p "${resdir}"
+	pushd "${resdir}" > /dev/null
+	${s} 1> stdout.txt 2> stderr.txt
+	status=UNKNOWN
+	if [ -e status.txt ]; then
+		status=$(cat status.txt)
+	fi
+	statusnw="$(echo -e "${status}" | sed -e 's/[[:space:]]*$//')"
+	marker="[${RED_COLOR}[X]${DEFAULT_COLOR}]"
+	if [ "$statusnw" == "ok" ]; then
+		marker="[${GREEN_COLOR}[/]${DEFAULT_COLOR}]"
+	fi
+	echo -e "TEST ${testname}: ${status} ${marker}"
+	if [ $do_cov == true ]; then
+		coverage3 report > covreport.txt
+		# coverage3 html
+	fi
+	popd > /dev/null
+done
+
+if [ $do_cov == true ]; then
+	coverage3 combine $(find results -name ".coverage")
+	coverage3 html
+fi

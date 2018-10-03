@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+bindir="$(cd "${scriptdir}/../../bin" >/dev/null && pwd )"
+
+#pycall="${pycovercall} ${bindir}/compogit-get-component-from-compospec.py ${scriptdir}/compospec.json"
+
+outtxt="./output.txt"
+
+${bindir}/compogit-get-component-from-compospec "${scriptdir}/compospec.json" \
+	< "${scriptdir}/filelist.txt" \
+	> "${outtxt}"
+
+diff -u "${scriptdir}/expected.txt" "${outtxt}" > "./output.diff"
+
+status="FAIL"
+cmp --silent "${scriptdir}/expected.txt" "./output.txt" && status="ok"
+echo $status >> "./status.txt"

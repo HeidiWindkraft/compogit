@@ -1,0 +1,19 @@
+{
+	"TopTextFiles": {
+		"glob": [ "*.txt" ]
+	},
+	"OtherTextFiles": {
+		"glob": [ "**/*.txt" ]
+	},
+	"FilesInFoo": {
+		"glob": [ "Foo/**" ]
+	},
+	"FilesWithStarInName": {
+		"glob": [ "*\\**.*" ]
+	},
+	"TopPngs": { "glob": ["img/*.png"] },
+	"LevelOnePngs": { "glob": ["img/*/*.png"] },
+	"OtherPngs": { "glob": ["img/*/*/**/*.png"] },
+	"Images2": { "glob": ["img2/**/*.{png,jpeg,jpg}"] },
+	"Report" : { "glob": ["report[0-9]*.log"] }
+}
