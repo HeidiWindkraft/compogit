@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+	echo "Error: Not path given." 1>&2
+	exit 1
+fi
+
+thedir="$1"
+if [ ! -d "${thedir}" ]; then
+	thedir=$(dirname "${thedir}")
+	if [ ! -d "${thedir}" ]; then
+		echo "Error: '${thedir}' is not a directory." 1>&2
+		exit 1
+	fi
+fi
+
+cd "${thedir}"
+while [ ! -e "./.git" ]; do
+	if [ "$(pwd)" == "/" ]; then
+		echo "Error: Could not find git root directory, reached file system root." 1>&2
+		exit 1
+	fi
+	cd ..
+done
+
+echo "$(pwd)"
+exit 0

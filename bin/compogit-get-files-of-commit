@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+#git diff-tree --no-commit-id --name-status -r $1
+git diff-tree --no-commit-id --name-only -r $1

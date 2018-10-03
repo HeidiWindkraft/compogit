@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+cat - | ${COMPOGIT_PYTHON} "${scriptdir}/compogit_py.py" filter-filelist-for-component-from-compospec "$@"

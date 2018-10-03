@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+cat - | ${scriptdir}/compogit-filter-filelist-for-component-from-compospec \
+	"$(${scriptdir}/compogit-find-config-dir)/compospec.json" \
+	"$1"

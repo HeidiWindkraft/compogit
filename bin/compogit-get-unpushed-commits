@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# TODO what about `git cherry`?
+# TODO What if there is no remote/origin?
+# TODO What if we are on a branch?
+#git log origin/master..HEAD --format=format:%H
+
+# Find out the current branch and its remote tracking branch.
+# (Requires git version 1.8.5.)
+branch_comment=$(git status --porcelain --branch | head -n 1)
+if [[ "${branch_comment}" != "## "* ]]; then
+	echo "Error: Unexpected branch information: ${branch_comment}" 1>&2
+	exit 1
+fi
+branch_range=$(echo "${branch_comment}" | cut -c 4-)
+
+git log ${branch_range} --format=format:%H

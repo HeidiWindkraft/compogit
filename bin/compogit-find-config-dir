@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+pos="$1"
+if [ -z "${pos}" ]; then
+	pos=.
+fi
+
+git_rdir="$(${scriptdir}/compogit-find-git-root-dir "${pos}")"
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to determine git directory." 1>&2;
+	exit 1
+fi
+
+hidden_conf="${git_rdir}/.compogit"
+visible_conf="${git_rdir}/compogit"
+
+if [ -d "${visible_conf}" ]; then
+	if [ -d "${hidden_conf}" ]; then
+		echo "Error: Repository has two compogit directories: \"${visible_conf}\" and \"${hidden_conf}\", fallback is \"${visible_conf}\"" 1>&2
+		echo "${visible_conf}"
+		exit 1
+	fi
+	echo "${visible_conf}"
+	exit 0
+elif [ -d "${hidden_conf}" ]; then
+	echo "${hidden_conf}"
+	exit 0
+else
+	echo "Error: Found no compogit directory for git repository \"${git_rdir}\"" 1>&2
+	echo "/dev/null/" # create a path which can't be accessed.
+	exit 1
+fi
+
+exit 1

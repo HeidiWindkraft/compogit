@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+function die_usage {
+	cat <<EOH 1>&2
+USAGE
+	$0 path/to/interactive_rebase_sequence_todo_file commit_to_rebase
+
+EXAMPLE
+	$0 myrebasetodos.txt HEAD~5
+	$0 myrebasetodos.txt b5fafaf5d08f8c0e9bc994b84613a05b876cbd71
+
+DESCRIPTION
+	Performs an interactive rebase without being interactive (am I doing the right thing here?).
+	Instead of opening an editor to edit the "interactive rebase sequence todo file" it just
+	passes the file which is given as first argument.
+	The first argument can be followed with options for 'git rebase -i'.
+EOH
+	exit 1
+}
+
+if [ -z "$1" ]; then
+	echo "Error: Not enough arguments." 1>&2
+	die_usage
+fi
+if [ ! -e "$1" ]; then
+	echo "Error: Given rebase sequence todo file \"$1\" does not exist" 1>&2
+	die_usage
+fi
+
+todo_file="$1"
+shift
+export GIT_EDITOR="cp \"${todo_file}\" "
+#function compogit_pseudo_editor {
+#	cp "${todo_file}" "$1"
+#}
+#export GIT_EDITOR=compogit_pseudo_editor
+git rebase -i "$@"
