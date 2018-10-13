@@ -10,7 +10,7 @@ import compogit_get_component_from_compospec;
 import glob_to_regex;
 
 operations = {
-  "get-component-from-compospec": compogit_get_component_from_compospec.main,
+  "ann-components-to-filelist-given-compospec": compogit_get_component_from_compospec.main,
   "get-components-of-filelist-from-compospec": compogit_get_component_from_compospec.main_get_component_names,
   "filter-filelist-for-component-from-compospec": compogit_get_component_from_compospec.main_filter,
   "glob-to-regex": glob_to_regex.main

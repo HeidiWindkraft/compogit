@@ -13,10 +13,10 @@ def usage():
   print (
 """
 USAGE
-  compogit-get-component-from-compospec compospecjson < filelist
+  compogit-ann-components-to-filelist-given-compospec compospecjson < filelist
 
 EXAMPLE
-  find -type f | compogit-get-component-from-compospec .compogit/compospec.json
+  find -type f | compogit-ann-components-to-filelist-given-compospec .compogit/compospec.json
 
 DESCRIPTION
   Determines the component of the filepaths on STDIN and outputs them in the format "<COMPONENT_NAME>:<FILENAME>".
@@ -209,9 +209,9 @@ EXAMPLE
 
 DESCRIPTION
   Determines the component of the filepaths on STDIN and emits a list of component names.
-  See also compogit-get-component-from-compospec.
+  See also compogit-ann-components-to-filelist-given-compospec.
 
-USAGE of compogit-get-component-from-compospec:
+USAGE of compogit-ann-components-to-filelist-given-compospec:
 """,
     file=sys.stderr
   );
@@ -247,9 +247,9 @@ EXAMPLE
 DESCRIPTION
   Determines the component of the filepaths on STDIN and emits
   only those filepaths which are part of the given component.
-  See also compogit-get-component-from-compospec.
+  See also compogit-ann-components-to-filelist-given-compospec.
 
-USAGE of compogit-get-component-from-compospec:
+USAGE of compogit-ann-components-to-filelist-given-compospec:
 """,
     file=sys.stderr
   );

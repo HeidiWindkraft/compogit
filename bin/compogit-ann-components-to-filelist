@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
-cat - | ${scriptdir}/compogit-get-component-from-compospec \
+cat - | ${scriptdir}/compogit-ann-components-to-filelist-given-compospec \
 	"$(${scriptdir}/compogit-find-config-dir)/compospec.json"

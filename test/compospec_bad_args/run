@@ -3,9 +3,7 @@
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 bindir="$(cd "${scriptdir}/../../bin" >/dev/null && pwd )"
 
-#pycall="${pycovercall} ${bindir}/compogit-get-component-from-compospec.py"
-
-synopsis_line=$(${bindir}/compogit-get-component-from-compospec 2>&1 < /dev/null | grep USAGE)
+synopsis_line=$(${bindir}/compogit-ann-components-to-filelist-given-compospec 2>&1 < /dev/null | grep USAGE)
 if [ "${synopsis_line}" == "USAGE" ]; then
 	echo "ok" >> status.txt
 else

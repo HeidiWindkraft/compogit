@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# TODO this should be called ... differently ... compogit-ann-components-to-filelist-from-compospec
-
-scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
-#cat - | "${scriptdir}/compogit-get-component-from-compospec.py" "$@"
-cat - | ${COMPOGIT_PYTHON} "${scriptdir}/compogit_py.py" get-component-from-compospec "$@"
