@@ -239,7 +239,7 @@ def usage_filter():
   print (
 """
 USAGE
-  compogit-filter-filelist-for-component-from-compospec compospecjson component < filelist
+  compogit-filter-filelist-for-component-given-compospec compospecjson component < filelist
 
 EXAMPLE
   find -type f | compogit-get-componentlist-of-filelist .compogit/compospec.json Parser
