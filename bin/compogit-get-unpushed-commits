@@ -12,6 +12,7 @@ if [[ "${branch_comment}" != "## "* ]]; then
 	echo "Error: Unexpected branch information: ${branch_comment}" 1>&2
 	exit 1
 fi
-branch_range=$(echo "${branch_comment}" | cut -c 4-)
+# Cut off the "##" and the "[ahead ...".
+branch_range=$(echo "${branch_comment}" | cut -c 4- | cut -d '[' -f 1)
 
-git log ${branch_range} --format=format:%H
+git log ${branch_range} --format=format:%H "$@"

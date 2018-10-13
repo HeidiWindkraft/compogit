@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
+
+"${scriptdir}/compogit-split-unpushed-commit" ${last_commit}

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+echo "TODO" 1>&2
+echo "\$@: " "$@" 1>&2
+exit 1
