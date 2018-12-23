@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+pos="$1"
+if [ -z "${pos}" ]; then
+	pos=.
+fi
+
+git_rdir="$(${scriptdir}/compogit-find-git-root-dir "${pos}")"
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to determine git directory." 1>&2;
+	exit 1
+fi
+
+compogit_cfgdir=$(${scriptdir}/compogit-find-config-dir "${git_rdir}" 2>/dev/null)
+if [ $? -eq 0 ]; then
+	echo "Error: compogit configuration directory already exists: \"${compogit_cfgdir}\"" 1>&2
+	exit 1
+fi
+
+compogit_cfgdir="${git_rdir}/compogit"
+if [ -e "${compogit_cfgdir}" ]; then
+	echo "Error: \"${compogit_cfgdir}\" already exists" 1>&2
+	exit 1
+fi
+
+mkdir "${compogit_cfgdir}"
+
+# TODO copy default component specification.
+
+exit 0
