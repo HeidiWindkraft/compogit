@@ -11,4 +11,4 @@ fi
 compogitdir=$("${scriptdir}/compogit-find-config-dir")
 compospec="${compogitdir}/compospec.json"
 
-"${scriptdir}/compogit-get-unstaged-files-of-component-given-compospec" ${compo} "${compospec}"
+"${scriptdir}/compogit-get-unstaged-files-of-component-given-compospec" "${compospec}" ${compo}

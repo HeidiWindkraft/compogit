@@ -2,8 +2,8 @@
 
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 
-compo=$1
-compospec=$2 # TODO flip
+compospec=$1
+compo=$2
 
 if [ -z ${compo} ]; then
 	echo "Error: No component given" 1>&2
