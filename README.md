@@ -40,12 +40,12 @@ It splits your last commit into one commit for each component, if it modified mu
 Optionally, specify the message, which shall be used to split your commits in `compogit/splitmessage.txt`.
 For example:
 ```
-%s (component ${compogit_component} of ${compogit_original_short_hash})
+%s (component ${compogit_component} of %h)
+
 %b
 ```
 If no `splitmessage.txt` is given, compogit just does every commit using the original message.
 See [`man git-log` `/PRETTY FORMATS`](https://git-scm.com/docs/pretty-formats) for a list of placeholders.
-The list of compogit placeholders is:
-  - `${compogit_component}` the component which is modified by this commit
-  - `${compogit_original_short_hash}` the short hash of the commit which is currently split
-  - `${compogit_original_long_hash}` the full hash of the commit which is currently split
+Newlines in `splitmessage.txt` are replaced by `%n`.
+Carriage return characters are removed from `splitmessage.txt`.
+Currently the only compogit placeholders is: `${compogit_component}` the component which is modified by this commit.
