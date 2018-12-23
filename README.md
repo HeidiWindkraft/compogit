@@ -15,7 +15,7 @@ you should probably create a git repository for each component.
 
 ## Usage
 
-(work in progress)
+**(work in progress)**
 
 Create a directory called `compogit` or `.compogit` in the top-level directory of
 your git repository - this can be done using `compogit-init`.
@@ -37,7 +37,7 @@ If your last commit modified different components, you can call `compogit-split-
 to split it.
 It splits your last commit into one commit for each component, if it modified multiple components.
 
-Optionally, specify the message, which shall be used to split your commits in `compogit/splitmessage.txt`.
+You can specify the message, which shall be used to split your commits in `compogit/splitmessage.txt`.
 For example:
 ```
 %s (component ${compogit_component} of %h)
