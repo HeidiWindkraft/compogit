@@ -37,7 +37,7 @@ If your last commit modified different components, you can call `compogit-split-
 to split it.
 It splits your last commit into one commit for each component, if it modified multiple components.
 
-You can specify the message, which shall be used to split your commits in `compogit/splitmessage.txt`.
+You can specify the message which shall be used to split your commits in `compogit/splitmessage.txt`.
 For example:
 ```
 %s (component ${compogit_component} of %h)
@@ -48,4 +48,4 @@ If no `splitmessage.txt` is given, compogit just does every commit using the ori
 See [`man git-log` `/PRETTY FORMATS`](https://git-scm.com/docs/pretty-formats) for a list of placeholders.
 Newlines in `splitmessage.txt` are replaced by `%n`.
 Carriage return characters are removed from `splitmessage.txt`.
-Currently the only compogit placeholders is: `${compogit_component}` the component which is modified by this commit.
+Currently the only compogit placeholder is: `${compogit_component}` the component which is modified by this commit.
