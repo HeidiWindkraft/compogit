@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+compo=$1
+if [ -z ${compo} ]; then
+	echo "Error: No component given"
+	exit 1;
+fi
+
+compogitdir=$("${scriptdir}/compogit-find-config-dir")
+compospec="${compogitdir}/compospec.json"
+
+"${scriptdir}/compogit-get-unstaged-files-of-component-given-compospec" ${compo} "${compospec}"

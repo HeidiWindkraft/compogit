@@ -2,6 +2,18 @@
 
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 
+# Approach:
+# Check whether there are multiple components in the commit. If not don't do anything.
+# Git rebase -i starting with the given commit,
+# passing an editor which replaces the "pick" of the given commit by an "edit".
+# Determine components of last commit (HEAD) and create commit-messages for all the components.
+# git reset HEAD^
+# For all components in alphabetical order:
+#   compogit-add-all-modified-of-component ${component}
+#   git commit -F ${commit_message_of_component}
+# git rebase --continue
+
+
 echo "TODO" 1>&2
 echo "\$@: " "$@" 1>&2
 exit 1

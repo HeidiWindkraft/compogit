@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+compo=$1
+compospec=$2 # TODO flip
+
+if [ -z ${compo} ]; then
+	echo "Error: No component given" 1>&2
+	exit 1;
+fi
+if [ -z ${compospec} ]; then
+	echo "Error: No component specification given" 1>&2
+	exit 1;
+fi
+
+# Note: Multiple files which reside in the same folder are displayed as "?? foldername",
+#       if the folder doesn't contain any staged files.
+find $(git status --porcelain | cut -c 4-) -type f \
+	| sort \
+	| uniq \
+	| "${scriptdir}/compogit-filter-filelist-for-component-given-compospec" "${compospec}" ${compo}
