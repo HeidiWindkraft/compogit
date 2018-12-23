@@ -1,0 +1,4 @@
+Initial commit to a/a.txt
+Initial commit to b/b.txt
+Commit to both components (component A)
+Commit to both components (component B)
