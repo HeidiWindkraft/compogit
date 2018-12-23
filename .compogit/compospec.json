@@ -1,0 +1,14 @@
+{
+	"Source": {
+		"path": [ "bin" ]
+	},
+	"Test": {
+		"path": [ "test" ]
+	},
+	"Meta": {
+		"path": [ ".compgit" ]
+	},
+	"Docu": {
+		"path": [ "LICENSE", "README.md" ]
+	}
+}
