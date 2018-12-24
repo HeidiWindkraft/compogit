@@ -61,5 +61,7 @@ echo "" >> logmessages.txt
 diff -u "${scriptdir}/expected.txt" logmessages.txt > logmessages.diff
 
 status="FAIL"
-cmp --silent "${scriptdir}/expected.txt" logmessages.txt && status="ok"
+cmp --silent "${scriptdir}/expected.txt" logmessages.txt \
+	&& [ "$(git status --branch --porcelain | head -n 1)" == "## master" ] \
+	&& status="ok"
 echo $status >> "../status.txt"
