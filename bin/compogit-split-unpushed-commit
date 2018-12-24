@@ -16,7 +16,7 @@ fi
 # Determine components of last commit (HEAD) and create commit-messages for all the components.
 # git reset HEAD^
 # For all components in alphabetical order:
-#   compogit-add-all-modified-of-component ${component}
+#   add all modified files of component ${component}
 #   git commit -F ${commit_message_of_component}
 # git rebase --continue
 
@@ -48,7 +48,7 @@ git rebase -i ${commit}
 git reset HEAD^
 
 for comp in ${compos}; do
-	"${scriptdir}/compogit-add-all-modified-of-component" ${comp}
+	"${scriptdir}/compogit-add-unstaged-files-of-component" ${comp}
 	git commit -F "${tmpdir}/${comp}_${commit}"
 done
 
