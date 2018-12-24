@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+current_branch=$1
+
+if [ -z ${current_branch} ]; then
+	echo "Error: No current branch given." 1>&2
+	exit 1
+fi
+
+# Create a tag in case something goes wrong.
+last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
+datetime=$(date --utc "+%Y%m%d_%H%M%S")
+tag_name="_compogit_original_${current_branch}_${last_commit}_${datetime}z"
+echo "Info: Creating tag ${tag_name}, so you can roll back if anything goes wrong..." 1>&2
+git tag ${tag_name}
+if [ $? -ne 0 ]; then
+	echo "Error: Creation of tag ${tag_name} failed" 1>&2
+	exit 1
+else
+	echo "Info: Created tag ${tag_name}." 1>&2
+fi
+
+echo "${tag_name}"
+exit 0

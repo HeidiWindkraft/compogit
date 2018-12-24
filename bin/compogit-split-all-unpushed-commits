@@ -14,17 +14,10 @@ if [ "${cur_status}" != "" ]; then
 fi
 
 # Create a tag in case something goes wrong.
-current_branch=$(git branch | grep \* | cut -d ' ' -f2)
-last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
-datetime=$(date --utc "+%Y%m%d_%H%M%S")
-tag_name="_compogit_original_${current_branch}_${last_commit}_${datetime}z"
-echo "Info: Creating tag ${tag_name}, so you can roll back if anything goes wrong..." 1>&2
-git tag ${tag_name}
+current_branch=$("${scriptdir}/compogit-get-current-branch")
+tag_name=$("${scriptdir}/compogit-tag-original" "${current_branch}")
 if [ $? -ne 0 ]; then
-	echo "Error: Creation of tag ${tag_name} failed" 1>&2
 	exit 1
-else
-	echo "Info: Created tag ${tag_name}." 1>&2
 fi
 
 # Split the commits.
@@ -39,29 +32,4 @@ for commit in ${commits}; do
 done
 
 # Fix potentially detached head.
-new_last_commit=$(git log HEAD^..HEAD --format=format:%H)
-new_datetime=$(date --utc "+%Y%m%d_%H%M%S")
-new_tag_name="_compogit_result_${current_branch}_${new_last_commit}_${new_datetime}z"
-echo "Info: Creating tag ${new_tag_name} to fix potentially detached head" 1>&2
-git tag ${new_tag_name}
-if [ $? -ne 0 ]; then
-	echo "Error: Creation of tag ${new_tag_name} failed. Consider rolling back to tag ${tag_name}" 1>&2
-	exit 1
-else
-	echo "Info: Created tag ${new_tag_name}." 1>&2
-fi
-git checkout ${current_branch}
-if [ $? -ne 0 ]; then
-	echo "Error: Failed to checkout branch ${current_branch}. Consider rolling back to tag ${tag_name}" 1>&2
-	exit 1
-fi
-git reset --hard ${new_last_commit}
-if [ $? -ne 0 ]; then
-	echo "Error: Failed to do a hard reset of branch ${current_branch} to ${new_last_commit}. Consider rolling back to tag ${tag_name}" 1>&2
-	exit 1
-fi
-
-echo "Info: Apparently everything succeeded. If so, you can remove the tags:" 1>&2
-echo "      git tag -d ${tag_name}" 1>&2
-echo "      git tag -d ${new_tag_name}" 1>&2
-exit 0
+"${scriptdir}/compogit-fix-potentially-detached-head" "${current_branch}" "${tag_name}"

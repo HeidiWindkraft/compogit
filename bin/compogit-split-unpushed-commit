@@ -46,14 +46,6 @@ for comp in ${compos}; do
 done
 "${scriptdir}/compogit-get-splitmessage" none ${commit} > "${tmpdir}/none_${commit}"
 
-# Check whether we are rebasing the last commit, because then we mustn't continue the rebase in the end
-is_last=0
-last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
-if [[ ${last_commit} == ${commit}* ]]; then
-	echo "Info: ${commit} is last commit" 1>&2
-	is_last=1
-fi
-
 # Start rebasing ...
 export GIT_EDITOR="${scriptdir}/compogit-editor-edit-first-commit "
 git rebase -i ${commit}^
@@ -81,8 +73,6 @@ fi
 echo "Info: Removing temporary directory \"${tmpdir}\"" 1>&2
 rm -r "${tmpdir}"
 
-# Replay the rest of the commits
-if [ ${is_last} == 0 ]; then
-	echo "Info: Running git rebase --continue" 1>&2
-	git rebase --continue
-fi
+# Replay the rest of the commits - this should also avoid detached heads (although it will complain that there is nothing to replay).
+echo "Info: Running 'git rebase --continue'" 1>&2
+git rebase --continue

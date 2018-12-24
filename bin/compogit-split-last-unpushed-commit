@@ -2,6 +2,21 @@
 
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 
+# Create a tag in case something goes wrong.
+current_branch=$("${scriptdir}/compogit-get-current-branch")
+tag_name=$("${scriptdir}/compogit-tag-original" "${current_branch}")
+if [ $? -ne 0 ]; then
+	exit 1
+fi
+
 last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
 
 "${scriptdir}/compogit-split-unpushed-commit" ${last_commit}
+if [ $? -ne 0 ]; then
+	echo "Error: Split failed. Consider rolling back to tag ${tag_name}" 1>&2
+	exit 1
+fi
+
+echo "Info: Apparently everything worked as expected. If so, you can remove the backup tag:" 1>&2
+echo "      git tag -d ${tag_name}" 1>&2
+exit 0

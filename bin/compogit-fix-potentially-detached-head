@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+current_branch=$1
+tag_name=$2
+
+if [ -z ${current_branch} ]; then
+	echo "Error: No current branch given." 1>&2
+	exit 1
+fi
+
+if [ -z ${tag_name} ]; then
+	echo "Error: No backup tag name given." 1>&2
+	exit 1
+fi
+
+
+# Fix potentially detached head.
+new_last_commit=$(git log HEAD^..HEAD --format=format:%H)
+new_datetime=$(date --utc "+%Y%m%d_%H%M%S")
+new_tag_name="_compogit_result_${current_branch}_${new_last_commit}_${new_datetime}z"
+echo "Info: Creating tag ${new_tag_name} to fix potentially detached head" 1>&2
+git tag ${new_tag_name}
+if [ $? -ne 0 ]; then
+	echo "Error: Creation of tag ${new_tag_name} failed. Consider rolling back to tag ${tag_name}" 1>&2
+	exit 1
+else
+	echo "Info: Created tag ${new_tag_name}." 1>&2
+fi
+git checkout ${current_branch}
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to checkout branch ${current_branch}. Consider rolling back to tag ${tag_name}" 1>&2
+	exit 1
+fi
+git reset --hard ${new_last_commit}
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to do a hard reset of branch ${current_branch} to ${new_last_commit}. Consider rolling back to tag ${tag_name}" 1>&2
+	exit 1
+fi
+
+echo "Info: Apparently HEAD seems to be alright now. If so, you can remove the tags:" 1>&2
+echo "      git tag -d ${tag_name}" 1>&2
+echo "      git tag -d ${new_tag_name}" 1>&2
+exit 0
