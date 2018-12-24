@@ -31,5 +31,6 @@ for commit in ${commits}; do
 	fi
 done
 
-# Fix potentially detached head.
-"${scriptdir}/compogit-fix-potentially-detached-head" "${current_branch}" "${tag_name}"
+echo "Info: Apparently everything worked as expected. If so, you can remove the backup tag:" 1>&2
+echo "      git tag -d ${tag_name}" 1>&2
+exit 0
