@@ -1,0 +1,11 @@
+Modify b/b.txt
+Second commit to both components and also to c (component none)
+Second commit to both components and also to c (component B)
+Second commit to both components and also to c (component A)
+Modify a/a.txt
+Add c
+Commit to both components (component B)
+Commit to both components (component A)
+Initial commit to b/b.txt
+Initial commit to a/a.txt
+Add compogit configuration

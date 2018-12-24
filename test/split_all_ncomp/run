@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+bindir="$(cd "${scriptdir}/../../bin" >/dev/null && pwd )"
+
+# Create a git repository
+mkdir gitab
+cd gitab
+git init
+mkdir a
+mkdir b
+
+git config user.name "compogit test"
+git config user.email test@compogit.com
+
+# Add compogit configuration
+cp -r "${scriptdir}/compogit" ./
+git add .
+git commit -m "Add compogit configuration"
+
+# Create commits which don't touch multiple components.
+echo a1 > a/a.txt
+echo b1 > b/b.txt
+git add a/a.txt
+git commit -m "Initial commit to a/a.txt"
+git add b/b.txt
+git commit -m "Initial commit to b/b.txt"
+
+# Create a commit which touches two components.
+echo a2 > a/a.txt
+echo b2 > b/b.txt
+git add .
+git commit -m "Commit to both components"
+
+# Create a commit which doesn't touch a known component (this shouldn't be allowed in practice)
+mkdir c
+echo c1 > c/c.txt
+git add .
+git commit -m "Add c"
+
+# Only modify a.txt
+echo a3 > a/a.txt
+git add a/a.txt
+git commit -m "Modify a/a.txt"
+
+# Create a commit which touches two components and also unknown component c.
+echo a4 > a/a.txt
+echo b3 > b/b.txt
+echo c2 > c/c.txt
+git add .
+git commit -m "Second commit to both components and also to c"
+
+# Only modify b.txt
+echo b4 > b/b.txt
+git add b/b.txt
+git commit -m "Modify b/b.txt"
+
+# Get a log ...
+git log --format=format:"%h %s"
+
+# Split the unpushed commits
+${bindir}/compogit-split-all-unpushed-commits
+
+# Check whether the commits are as expected.
+git log --format=format:%s > logmessages.txt
+echo "" >> logmessages.txt
+
+diff -u "${scriptdir}/expected.txt" logmessages.txt > logmessages.diff
+
+status="FAIL"
+cmp --silent "${scriptdir}/expected.txt" logmessages.txt \
+	&& [ "$(git status --branch --porcelain | head -n 1)" == "## master" ] \
+	&& status="ok"
+echo $status >> "../status.txt"
