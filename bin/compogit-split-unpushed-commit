@@ -47,13 +47,14 @@ done
 # Check whether we are rebasing the last commit, because then we mustn't continue the rebase in the end
 is_last=0
 last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
-if [ ${last_commit} == ${commit}* ]; then
+if [[ ${last_commit} == ${commit}* ]]; then
+	echo "Info: ${commit} is last commit" 1>&2
 	is_last=1
 fi
 
 # Start rebasing ...
 export GIT_EDITOR="${scriptdir}/compogit-editor-edit-first-commit "
-git rebase -i ${commit}
+git rebase -i ${commit}^
 
 git reset HEAD^
 
@@ -74,6 +75,7 @@ if [[ ! -z $(git status -s) ]]; then
 fi
 
 # Replay the rest of the commits
-if [ is_last == 0 ]; then
+if [ ${is_last} == 0 ]; then
+	echo "Info: Running git rebase --continue" 1>&2
 	git rebase --continue
 fi

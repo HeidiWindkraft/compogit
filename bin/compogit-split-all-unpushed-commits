@@ -5,5 +5,6 @@ scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pw
 commits=$("${scriptdir}/compogit-get-unpushed-commits")
 
 for commit in ${commits}; do
+	echo "Info: Trying to split \"${commit}\"..." 1>&2
 	"${scriptdir}/compogit-split-unpushed-commit" ${commit}
 done
