@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+compo=$1
+commit=$2
+
+if [ -z ${compo} ]; then
+	error "Error: No component given" 1>&2
+	exit 1
+fi
+if [ -z ${commit} ]; then
+	error "Error: No commit given" 1>&2
+	exit 1
+fi
+
+git log --format="$("${scriptdir}/compogit-get-splitmessage-format" ${compo})" -n 1 ${commit}

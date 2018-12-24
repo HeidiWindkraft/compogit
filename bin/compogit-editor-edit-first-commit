@@ -2,27 +2,14 @@
 
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 
-commit=$1
-file=$2
+file=$1
 
-if [ -z ${commit} ]; then
-	echo "Error: No commit given" 1>&2
-	exit 1
-fi
 if [ -z ${file} ]; then
 	echo "Error: No file to edit given" 1>&2
 	exit 1
 fi
 if [ ! -e "${file}" ]; then
 	echo "Error: File \"${file}\" doesn't exist" 1>&2
-	exit 1
-fi
-
-first_line=$(head -n1 "${file}")
-
-if [[ "${first_line}" != *${commit}* ]]; then
-	echo "Error: First line doesn't contain commit \"${commit}\": \"${first_line}\"" 1>&2
-	echo "" > "${file}" # Abort commit
 	exit 1
 fi
 

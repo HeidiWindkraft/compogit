@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+compo=$1
+
+if [ -z ${compo} ]; then
+	error "Error: No component given" 1>&2
+	exit 1
+fi
+
+format="%B"
+splitmsg="$("${scriptdir}/compogit-find-config-dir")/splitmessage.txt"
+if [ -e "${splitmsg}" ]; then
+	format="$(cat "${splitmsg}" \
+				| sed 's/\r$//g' \
+				| sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/%n/g' \
+				| sed "s/\${compogit_component}/${compo}/g")"
+fi
+
+echo "${format}"
+exit 0

@@ -2,6 +2,13 @@
 
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 
+commit=$1
+
+if [ -z ${commit} ]; then
+	echo "Error: No commmit given"
+	exit 1;
+fi
+
 # Approach:
 # Check whether there are multiple components in the commit. If not don't do anything.
 # Git rebase -i starting with the given commit,
@@ -13,7 +20,47 @@ scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pw
 #   git commit -F ${commit_message_of_component}
 # git rebase --continue
 
+compos=$("${scriptdir}/compogit-get-files-of-commit" ${commit} \
+			| "${scriptdir}/compogit-get-components-of-filelist" \
+			| sort )
+ncompos=$(echo "${compos}" | wc --words)
 
-echo "TODO" 1>&2
-echo "\$@: " "$@" 1>&2
-exit 1
+if [ ${ncompos} -lt 2 ]; then
+	echo "Warning: Commit \"${commit}\" doesn't modify multiple components," \
+		" it only modifies \"${compos}\". Ignoring commit." 1>&2
+	exit 0
+fi
+
+# Create commit messages in a temporary directory
+tmpdir=$(mktemp -d || mktemp -d -t 'compogit_tmpdir')
+if [ ! -d "${tmpdir}" ]; then
+	echo "Error: Could not create temporary directory" 1>&2
+	exit 1
+fi
+for comp in ${compos}; do
+	"${scriptdir}/compogit-get-splitmessage" ${comp} ${commit} > "${tmpdir}/${comp}_${commit}"
+done
+
+# Start rebasing ...
+export GIT_EDITOR="${scriptdir}/compogit-editor-edit-first-commit "
+git rebase -i ${commit}
+
+git reset HEAD^
+
+for comp in ${compos}; do
+	"${scriptdir}/compogit-add-all-modified-of-component" ${comp}
+	git commit -F "${tmpdir}/${comp}_${commit}"
+done
+
+# Remove commit messages again.
+rm -r "${tmpdir}"
+
+# Check repository status
+if [[ ! -z $(git status -s) ]]; then
+	echo "Error: Repository has unstaged commits after committing components." \
+			" Commit them and then run 'git rebase --continue'" 1>&2
+	exit 1
+fi
+
+# Replay the rest of the commits
+git rebase --continue
