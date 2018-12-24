@@ -26,8 +26,8 @@ compos=$("${scriptdir}/compogit-get-files-of-commit" ${commit} \
 ncompos=$(echo "${compos}" | wc --words)
 
 if [ ${ncompos} -lt 2 ]; then
-	echo "Warning: Commit \"${commit}\" doesn't modify multiple components," \
-		" it only modifies \"${compos}\". Ignoring commit." 1>&2
+	echo "Info: Commit \"${commit}\" doesn't modify multiple components," \
+		"it only modifies \"${compos}\". Ignoring commit." 1>&2
 	exit 0
 fi
 
@@ -36,10 +36,20 @@ tmpdir=$(mktemp -d || mktemp -d -t 'compogit_tmpdir')
 if [ ! -d "${tmpdir}" ]; then
 	echo "Error: Could not create temporary directory" 1>&2
 	exit 1
+else
+	echo "Info: Created temporary directory \"${tmpdir}\"." \
+		"Direcory will be removed again, if this script terminates normally." 1>&2
 fi
 for comp in ${compos}; do
 	"${scriptdir}/compogit-get-splitmessage" ${comp} ${commit} > "${tmpdir}/${comp}_${commit}"
 done
+
+# Check whether we are rebasing the last commit, because then we mustn't continue the rebase in the end
+is_last=0
+last_commit=$("${scriptdir}/compogit-get-unpushed-commits" -n 1)
+if [ ${last_commit} == ${commit}* ]; then
+	is_last=1
+fi
 
 # Start rebasing ...
 export GIT_EDITOR="${scriptdir}/compogit-editor-edit-first-commit "
@@ -53,14 +63,17 @@ for comp in ${compos}; do
 done
 
 # Remove commit messages again.
+echo "Info: Removing temporary directory \"${tmpdir}\"" 1>&2
 rm -r "${tmpdir}"
 
 # Check repository status
 if [[ ! -z $(git status -s) ]]; then
 	echo "Error: Repository has unstaged commits after committing components." \
-			" Commit them and then run 'git rebase --continue'" 1>&2
+			"Commit them and then run 'git rebase --continue'" 1>&2
 	exit 1
 fi
 
 # Replay the rest of the commits
-git rebase --continue
+if [ is_last == 0 ]; then
+	git rebase --continue
+fi
