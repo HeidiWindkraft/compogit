@@ -1,4 +1,5 @@
-Initial commit to a/a.txt
-Initial commit to b/b.txt
-Commit to both components (component A)
 Commit to both components (component B)
+Commit to both components (component A)
+Initial commit to b/b.txt
+Initial commit to a/a.txt
+Add compogit configuration

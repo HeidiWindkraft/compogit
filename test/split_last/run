@@ -13,6 +13,11 @@ mkdir b
 git config user.name "compogit test"
 git config user.email test@compogit.com
 
+# Add compogit configuration
+cp -r "${scriptdir}/compogit" ./
+git add .
+git commit -m "Add compogit configuration"
+
 # Create commits which don't touch multiple components.
 echo a1 > a/a.txt
 echo b1 > b/b.txt
@@ -26,6 +31,9 @@ echo a2 > a/a.txt
 echo b2 > b/b.txt
 git add .
 git commit -m "Commit to both components"
+
+# Get a log ...
+git log --format=format:%s
 
 # Split the last commit.
 ${bindir}/compogit-split-last-unpushed-commit
