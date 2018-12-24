@@ -6,7 +6,7 @@
 		"path": [ "test" ]
 	},
 	"Meta": {
-		"path": [ ".compgit" ]
+		"path": [ ".compogit" ]
 	},
 	"Docu": {
 		"path": [ "LICENSE", "README.md" ]
