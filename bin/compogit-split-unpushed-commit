@@ -24,6 +24,7 @@ compos=$("${scriptdir}/compogit-get-files-of-commit" ${commit} \
 			| "${scriptdir}/compogit-get-components-of-filelist" \
 			| sort )
 ncompos=$(echo "${compos}" | wc --words)
+files_of_commit=$("${scriptdir}/compogit-get-files-of-commit" ${commit})
 
 if [ ${ncompos} -lt 2 ]; then
 	echo "Info: Commit \"${commit}\" doesn't modify multiple components," \
@@ -43,6 +44,7 @@ fi
 for comp in ${compos}; do
 	"${scriptdir}/compogit-get-splitmessage" ${comp} ${commit} > "${tmpdir}/${comp}_${commit}"
 done
+"${scriptdir}/compogit-get-splitmessage" none ${commit} > "${tmpdir}/none_${commit}"
 
 # Check whether we are rebasing the last commit, because then we mustn't continue the rebase in the end
 is_last=0
@@ -58,21 +60,26 @@ git rebase -i ${commit}^
 
 git reset HEAD^
 
+# Handle files which are in components
 for comp in ${compos}; do
 	"${scriptdir}/compogit-add-unstaged-files-of-component" ${comp}
 	git commit -F "${tmpdir}/${comp}_${commit}"
 done
+# Handle files which aren't in components
+if [[ ! -z $(git status --short --porcelain) ]]; then
+	echo "Info: Re-adding files which are in no component" 1>&2
+	git add ${files_of_commit}
+	git commit -F "${tmpdir}/none_${commit}"
+	if [ $? -ne 0 ]; then
+		echo "Error: Failed to commit files which aren't part of a component." \
+				"Commit them and then run 'git rebase --continue'" 1>&2
+		exit 1
+	fi
+fi
 
 # Remove commit messages again.
 echo "Info: Removing temporary directory \"${tmpdir}\"" 1>&2
 rm -r "${tmpdir}"
-
-# Check repository status
-if [[ ! -z $(git status -s) ]]; then
-	echo "Error: Repository has unstaged commits after committing components." \
-			"Commit them and then run 'git rebase --continue'" 1>&2
-	exit 1
-fi
 
 # Replay the rest of the commits
 if [ ${is_last} == 0 ]; then
