@@ -49,7 +49,7 @@ git add b/b.txt
 git commit -m "Modify b/b.txt"
 
 # Get a log ...
-git log --format=format:%s
+git log --format=format:"%h %s"
 
 # Split the unpushed commits
 ${bindir}/compogit-split-all-unpushed-commits
