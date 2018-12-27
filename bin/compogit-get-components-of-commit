@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+commit=$1
+if [ -z ${commit} ]; then
+	echo "Error: No commit given" 1>&2
+	exit 1
+fi
+
+"${scriptdir}/compogit-get-files-of-commit" ${commit} \
+	| "${scriptdir}/compogit-get-components-of-filelist"

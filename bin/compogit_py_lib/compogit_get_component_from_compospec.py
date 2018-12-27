@@ -260,7 +260,7 @@ def main_filter():
   compomap = get_compomap_from_args(3, usage_filter); #:_
   componame = sys.argv[2]; #:_
   if componame not in compomap.keys():
-    raise ValueError("UnknownComponent: \"" + componame + "\" does not identify a component");
+    raise ValueError("UnknownComponent: \"" + componame + "\" does not identify a component (known: " + ', '.join(sorted(compomap.keys())) +")");
   compo = compomap[componame]; #:_
   for line in sys.stdin:
     fname = line.rstrip(); #:_

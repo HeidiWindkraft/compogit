@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+compo=$1
+if [ -z ${compo} ]; then
+	echo "Error: No component given" 1>&2
+	exit 2;
+fi
+
+# resulting status
+status=0
+
+# read each commit from stdin
+while read commitline
+do
+	commit="${commitline}"
+	compos=$("${scriptdir}/compogit-get-components-of-commit" ${commit})
+	echo "${compos}" | grep -w ${compo} > /dev/null
+	if [ $? == 0 ]; then
+		# The commit contains the component.
+		if [ $(echo "${compos}" | wc -w) != 1 ]; then
+			echo "Warning: Commit ${commit} modifies multiple components (not only ${compo}): ${compos}" 1>&2
+			status=1
+		fi
+		echo "${commit}"
+	fi
+done < /dev/stdin
+
+exit ${status}
