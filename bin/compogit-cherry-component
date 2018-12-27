@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# The result of this script can be passed to git cherry-pick.
+
 scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
 
 state=$1 # Either '+' for pending commits or '-' for already picked commits.

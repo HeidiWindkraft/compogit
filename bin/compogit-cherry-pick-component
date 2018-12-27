@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+compo=$1 # The component which shall be picked
+shift
+if [ -z ${compo} ]; then
+	echo "Error: No component given" 1>&2
+	exit 1
+fi
+
+# Get remaining number of arguments
+n_args=$(($# + 0))
+consumed=0
+
+# Get the arguments for cherry
+cherry_args=()
+while ((consumed < n_args)) && [ "$1" != "--pick" ]; do
+	cherry_args+=("$1")
+	consumed=$((consumed + 1))
+	shift
+done
+# Get the arguments for pick
+pick_args=()
+if [ "$1" == "--pick" ]; then
+	shift
+	consumed=$((consumed + 1))
+	while ((consumed < n_args)); do
+		pick_args+=("$1")
+		consumed=$((consumed + 1))
+		shift
+	done
+fi
+
+# Cherry, filter and cherry-pick
+commits=$("${scriptdir}/compogit-cherry-component" + ${compo} "${cherry_args[@]}")
+if [ $? != 0 ]; then
+	echo "Error: compogit-cherry-component detected issues (status $?)" 1>&2
+	exit 1
+fi
+for commit in ${commits}; do
+	commit_summary=$(git log --format=format:"%h %s" -n 1 ${commit})
+	echo "Info: Cherry-picking commit: ${commit_summary}" 1>&2
+	git cherry-pick ${commit} "${pick_args[@]}"
+	if [ $? != 0 ]; then
+		pick_args_str="${pick_args[@]}"
+		echo "Error: 'git cherry-pick ${commit} ${pick_args_str}' returned non-zero status $? - aborting" 1>&2
+		exit 1
+	fi
+done
+
+exit 0
