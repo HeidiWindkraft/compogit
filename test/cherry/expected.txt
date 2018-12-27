@@ -1,0 +1,4 @@
+
+Initial commit to a/a.txt
+Commit to both components (component A)
+Modify a/a.txt

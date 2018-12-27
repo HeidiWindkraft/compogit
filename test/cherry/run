@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+bindir="$(cd "${scriptdir}/../../bin" >/dev/null && pwd )"
+
+# Create a git repository
+mkdir gitab
+cd gitab
+git init
+mkdir a
+mkdir b
+
+git config user.name "compogit test"
+git config user.email test@compogit.com
+
+# Add compogit configuration
+cp -r "${scriptdir}/compogit" ./
+git add .
+git commit -m "Add compogit configuration"
+
+# Switch to a development branch
+git checkout -b dev
+
+# Create commits which don't touch multiple components.
+echo a1 > a/a.txt
+echo b1 > b/b.txt
+git add a/a.txt
+git commit -m "Initial commit to a/a.txt"
+git add b/b.txt
+git commit -m "Initial commit to b/b.txt"
+
+# Create a commit which touches two components.
+echo a2 > a/a.txt
+echo b2 > b/b.txt
+git add .
+git commit -m "Commit to both components"
+
+# Only modify a.txt
+echo a3 > a/a.txt
+git add a/a.txt
+git commit -m "Modify a/a.txt"
+
+# Only modify b.txt
+echo b4 > b/b.txt
+git add b/b.txt
+git commit -m "Modify b/b.txt"
+
+# Get a log ...
+echo "Before split:"
+git log --format=format:"%h %s"
+
+# Split the unpushed commits
+${bindir}/compogit-split-all-unpushed-commits
+
+# Get a log ...
+echo "After split:"
+git log --format=format:"%h %s"
+
+# Switch back to master
+git checkout master
+
+# get the output of git cherry
+git cherry HEAD dev -v
+
+# get commits to component A from branch dev which still need to be merged.
+${bindir}/compogit-cherry-component + A HEAD dev
+commits_to_A=$(${bindir}/compogit-cherry-component + A HEAD dev)
+
+# get the log messages and compare them.
+echo "" > cherrymessages.txt
+for commit in ${commits_to_A}; do
+	git log --format=format:%s%n -n 1 ${commit} >> cherrymessages.txt
+done
+
+# Check whether the commits are as expected.
+diff -u "${scriptdir}/expected.txt" cherrymessages.txt > cherrymessages.diff
+
+status="FAIL"
+cmp --silent "${scriptdir}/expected.txt" cherrymessages.txt \
+	&& [ "$(git status --branch --porcelain | head -n 1)" == "## master" ] \
+	&& status="ok"
+echo $status >> "../status.txt"
