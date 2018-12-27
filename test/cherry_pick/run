@@ -18,8 +18,10 @@ cp -r "${scriptdir}/compogit" ./
 git add .
 git commit -m "Add compogit configuration"
 
-# Switch to a development branch
+# Switch to a development branch --# and set some weird user name
 git checkout -b dev
+# git config user.name "private compogit test"
+# git config user.email privatetest@compogit.com
 
 # Create commits which don't touch multiple components.
 echo a1 > a/a.txt
@@ -56,27 +58,48 @@ ${bindir}/compogit-split-all-unpushed-commits
 echo "After split:"
 git log --format=format:"%h %s%n"
 
-# Switch back to master
+# Switch back to master --# and set the original user name
 git checkout master
+# git config user.name "compogit test"
+# git config user.email test@compogit.com
 
 # get the output of git cherry
 git cherry HEAD dev -v
 
 # get commits to component A from branch dev which still need to be merged.
 ${bindir}/compogit-cherry-component + A HEAD dev
-commits_to_A=$(${bindir}/compogit-cherry-component + A HEAD dev)
 
-# get the log messages and compare them.
-echo "" > cherrymessages.txt
-for commit in ${commits_to_A}; do
-	git log --format=format:%s%n -n 1 ${commit} >> cherrymessages.txt
-done
+# cherry pick the commits to A
+${bindir}/compogit-cherry-pick-component A HEAD dev
+
+# Get a log ...
+echo "After cherry-picking A:"
+git log --format=format:"%h %s%n"
+echo "After cherry-picking A (cherry):"
+git cherry HEAD dev -v
+
+# cherry pick the commits to B
+${bindir}/compogit-cherry-pick-component B HEAD dev --pick -x
+
+# Get a log ...
+echo "After cherry-picking B:"
+git log
+echo "END OF LOG"
+echo "After cherry-picking B (cherry):"
+git cherry HEAD dev -v
+
+# Count the occurrences of "cherry picked from commit"
+pickmsgcount=$(git log --format=format:%s%n%b%n | grep "cherry picked from commit" | wc -l)
 
 # Check whether the commits are as expected.
-diff -u "${scriptdir}/expected.txt" cherrymessages.txt > cherrymessages.diff
+git log --format=format:%s%n  > logmessages.txt
+echo "" >> logmessages.txt
+
+diff -u "${scriptdir}/expected.txt" logmessages.txt > logmessages.diff
 
 status="FAIL"
-cmp --silent "${scriptdir}/expected.txt" cherrymessages.txt \
+cmp --silent "${scriptdir}/expected.txt" logmessages.txt \
 	&& [ "$(git status --branch --porcelain | head -n 1)" == "## master" ] \
+	&& [ "$pickmsgcount" == 3 ] \
 	&& status="ok"
 echo $status >> "../status.txt"
