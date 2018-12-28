@@ -18,10 +18,10 @@ cp -r "${scriptdir}/compogit" ./
 git add .
 git commit -m "Add compogit configuration"
 
-# Switch to a development branch --# and set some weird user name
+# Switch to a development branch (and set some weird user name to see what happens during splitting and cherry-picking)
 git checkout -b dev
-# git config user.name "private compogit test"
-# git config user.email privatetest@compogit.com
+git config user.name "private compogit test"
+git config user.email privatetest@compogit.com
 
 # Create commits which don't touch multiple components.
 echo a1 > a/a.txt
@@ -30,12 +30,14 @@ git add a/a.txt
 git commit -m "Initial commit to a/a.txt"
 git add b/b.txt
 git commit -m "Initial commit to b/b.txt"
+sleep 1 # Sleep to see what happens to the time-stamps
 
 # Create a commit which touches two components.
 echo a2 > a/a.txt
 echo b2 > b/b.txt
 git add .
 git commit -m "Commit to both components"
+sleep 1 # Sleep to see what happens to the time-stamps
 
 # Only modify a.txt
 echo a3 > a/a.txt
@@ -47,9 +49,16 @@ echo b4 > b/b.txt
 git add b/b.txt
 git commit -m "Modify b/b.txt"
 
+# Sleep to see what happens to the time-stamps
+sleep 1
+
 # Get a log ...
 echo "Before split:"
 git log --format=format:"%h %s%n"
+
+# Restore original user name to see what happens during splitting and cherry-picking
+git config user.name "compogit test"
+git config user.email test@compogit.com
 
 # Split the unpushed commits
 ${bindir}/compogit-split-all-unpushed-commits
@@ -58,10 +67,8 @@ ${bindir}/compogit-split-all-unpushed-commits
 echo "After split:"
 git log --format=format:"%h %s%n"
 
-# Switch back to master --# and set the original user name
+# Switch back to master
 git checkout master
-# git config user.name "compogit test"
-# git config user.email test@compogit.com
 
 # get the output of git cherry
 git cherry HEAD dev -v
