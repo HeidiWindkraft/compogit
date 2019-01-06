@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+scriptdir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")" )" >/dev/null && pwd )"
+
+commits=$("${scriptdir}/compogit-get-unpushed-commits")
+
+# Check the commits.
+for commit in ${commits}; do
+	if [ $("${scriptdir}/compogit-get-components-of-commit" ${commit} | wc --words ) -gt 1 ]; then
+		echo "${commit}"
+	fi
+done
+
+exit 0

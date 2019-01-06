@@ -7,6 +7,19 @@ if [ -z "${pos}" ]; then
 	pos=.
 fi
 
+# Allow overriding the configuration directory
+if [ -n "${COMPOGIT_OVERRIDE_CONFIG_DIR}" ]; then
+	echo "Warning: compogit configuration directory path is overriden" \
+		"by COMPOGIT_OVERRIDE_CONFIG_DIR to \"${COMPOGIT_OVERRIDE_CONFIG_DIR}\"" 1>&2
+	if [ ! -e "${COMPOGIT_OVERRIDE_CONFIG_DIR}" ]; then
+		echo "Error: COMPOGIT_OVERRIDE_CONFIG_DIR references inexistent file or directory" 1>&2
+		echo "/dev/null/" # Something is fishy, create a path which can't be accessed.
+		exit 1
+	fi
+	echo "${COMPOGIT_OVERRIDE_CONFIG_DIR}"
+	exit 0
+fi
+
 git_rdir="$(${scriptdir}/compogit-find-git-root-dir "${pos}")"
 if [ $? -ne 0 ]; then
 	echo "Error: Failed to determine git directory." 1>&2;

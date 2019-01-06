@@ -20,9 +20,7 @@ fi
 #   git commit -F ${commit_message_of_component}
 # git rebase --continue
 
-compos=$("${scriptdir}/compogit-get-files-of-commit" ${commit} \
-			| "${scriptdir}/compogit-get-components-of-filelist" \
-			| sort )
+compos=$("${scriptdir}/compogit-get-components-of-commit" ${commit} | sort )
 ncompos=$(echo "${compos}" | wc --words)
 files_of_commit=$("${scriptdir}/compogit-get-files-of-commit" ${commit})
 
